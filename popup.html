@@ -4,12 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Focus Mode</title>
-    <script src="popup.js" defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 10px;
+        width: 250px;
+      }
+      button {
+        margin-top: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+      }
+    </style>
   </head>
   <body>
+    <h2>Focus Mode</h2>
     <button id="toggleButton">Focus Mode ON</button>
-    <input type="text" id="blockUrlInput" placeholder="차단할 URL 입력" />
-    <button id="addBlockButton">추가</button>
-    <ul id="blockedList"></ul>
+    <h3>차단할 URL 추가</h3>
+    <input type="text" id="urlInput" placeholder="example.com" />
+    <button id="addButton">추가</button>
+    <h3>차단된 URL 목록</h3>
+    <ul id="urlList"></ul>
+    <script src="popup.js"></script>
   </body>
 </html>
