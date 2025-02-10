@@ -1,26 +1,20 @@
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.set({ focusMode: false, blockedUrls: [] });
-});
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "toggleFocus") {
     chrome.storage.local.get(["focusMode", "blockedUrls"], (data) => {
-      const newState = message.state;
-      chrome.storage.local.set({ focusMode: newState }, () => {
-        if (newState) {
-          applyBlockRules(data.blockedUrls);
-        } else {
-          clearBlockRules();
-        }
-      });
+      if (message.state) {
+        applyBlockRules(data.blockedUrls || []);
+      } else {
+        clearBlockRules();
+      }
+      sendResponse({ success: true });
     });
-    sendResponse({ success: true });
+    return true;
   }
 
   if (message.action === "addUrl") {
     chrome.storage.local.get(["blockedUrls", "focusMode"], (data) => {
       let updatedUrls = new Set(data.blockedUrls);
-      updatedUrls.add(normalizeUrl(message.url)); // youtube.com과 www.youtube.com을 하나로 처리
+      updatedUrls.add(normalizeUrl(message.url.toLowerCase())); // URL을 소문자로 변환 후 추가
 
       chrome.storage.local.set({ blockedUrls: Array.from(updatedUrls) }, () => {
         if (data.focusMode) {
@@ -34,7 +28,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.action === "removeUrl") {
     chrome.storage.local.get(["blockedUrls", "focusMode"], (data) => {
-      let updatedUrls = data.blockedUrls.filter((url) => url !== message.url);
+      let updatedUrls = data.blockedUrls.filter(
+        (url) => url !== message.url.toLowerCase()
+      ); // 소문자로 비교
       chrome.storage.local.set({ blockedUrls: updatedUrls }, () => {
         if (data.focusMode) {
           applyBlockRules(updatedUrls);
@@ -92,5 +88,5 @@ function clearBlockRules() {
 }
 
 function normalizeUrl(url) {
-  return url.replace(/^www\./, ""); // www.youtube.com과 youtube.com을 같은 규칙으로 처리
+  return url.replace(/^www\./, "").toLowerCase(); // www.youtube.com과 youtube.com을 같은 규칙으로 처리
 }

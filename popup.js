@@ -1,31 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
   const toggleButton = document.getElementById("toggleButton");
-  const addButton = document.getElementById("addButton");
   const urlInput = document.getElementById("urlInput");
+  const addButton = document.getElementById("addButton");
   const urlList = document.getElementById("urlList");
 
-  chrome.storage.local.get(["focusMode", "blockedUrls"], function (data) {
-    updateButton(data.focusMode || false);
-    updateUrlList(data.blockedUrls || []);
+  // 저장된 Focus Mode 상태 가져오기
+  chrome.storage.local.get(["focusMode", "blockedUrls"], function (result) {
+    updateButton(result.focusMode || false);
+    updateUrlList(result.blockedUrls || []);
   });
 
   toggleButton.addEventListener("click", function () {
-    chrome.storage.local.get(["focusMode"], function (data) {
-      let newState = !data.focusMode;
-      chrome.runtime.sendMessage(
-        { action: "toggleFocus", state: newState },
-        () => {
-          updateButton(newState);
-        }
-      );
+    chrome.storage.local.get(["focusMode"], function (result) {
+      let isEnabled = !result.focusMode;
+
+      chrome.storage.local.set({ focusMode: isEnabled }, function () {
+        updateButton(isEnabled);
+        chrome.runtime.sendMessage({ action: "toggleFocus", state: isEnabled });
+      });
     });
   });
 
   addButton.addEventListener("click", function () {
-    const url = urlInput.value.trim();
+    let url = urlInput.value.trim().toLowerCase(); //  입력값을 소문자로 변환
+    url = normalizeUrl(url); //  www. 제거
+
     if (url) {
       chrome.runtime.sendMessage({ action: "addUrl", url }, () => {
-        urlInput.value = ""; // 추가 후 input 박스 비우기
+        urlInput.value = ""; // 입력 필드 비우기
         refreshUrlList();
       });
     }
@@ -37,8 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function refreshUrlList() {
-    chrome.storage.local.get(["blockedUrls"], function (data) {
-      updateUrlList(data.blockedUrls || []);
+    chrome.storage.local.get(["blockedUrls"], function (result) {
+      updateUrlList(result.blockedUrls || []);
     });
   }
 
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     urlList.innerHTML = "";
     urls.forEach((url) => {
       const li = document.createElement("li");
-      li.textContent = url;
+      li.textContent = url.toLowerCase(); // UI에서도 소문자로 표시
       const removeButton = document.createElement("button");
       removeButton.textContent = "삭제";
       removeButton.addEventListener("click", function () {
@@ -58,5 +60,9 @@ document.addEventListener("DOMContentLoaded", function () {
       li.appendChild(removeButton);
       urlList.appendChild(li);
     });
+  }
+
+  function normalizeUrl(url) {
+    return url.replace(/^www\./, "").toLowerCase(); //  www. 제거 + 소문자로 변환
   }
 });
