@@ -1,26 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Focus Mode</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        width: 200px;
-      }
-      button {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        cursor: pointer;
-      }
-    </style>
+    <script src="popup.js" defer></script>
   </head>
   <body>
-    <h3>Focus Mode</h3>
-    <button id="toggleButton">Loading...</button>
-    <script src="popup.js"></script>
+    <button id="toggleButton">Focus Mode ON</button>
+    <input type="text" id="blockUrlInput" placeholder="차단할 URL 입력" />
+    <button id="addBlockButton">추가</button>
+    <ul id="blockedList"></ul>
   </body>
 </html>

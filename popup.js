@@ -1,40 +1,64 @@
 document.addEventListener("DOMContentLoaded", function () {
   const toggleButton = document.getElementById("toggleButton");
+  const blockUrlInput = document.getElementById("blockUrlInput");
+  const addBlockButton = document.getElementById("addBlockButton");
+  const blockedList = document.getElementById("blockedList");
 
-  // 저장된 Focus Mode 상태 가져오기
-  chrome.storage.local.get(["focusMode"], function (result) {
+  chrome.storage.local.get(["focusMode", "blockedUrls"], function (result) {
     let isEnabled = result.focusMode || false;
     updateButton(isEnabled);
+    updateBlockedList(result.blockedUrls || []);
   });
 
-  // 버튼 클릭 시 focusMode 상태 변경
   toggleButton.addEventListener("click", function () {
     chrome.storage.local.get(["focusMode"], function (result) {
-      let isEnabled = !result.focusMode; // 상태 반전
+      let isEnabled = !result.focusMode;
 
       chrome.storage.local.set({ focusMode: isEnabled }, function () {
-        updateButton(isEnabled); // 버튼 상태 업데이트
-        // Background로 메시지 보내기
-        chrome.runtime.sendMessage(
-          { action: "toggleFocus", state: isEnabled },
-          function (response) {
-            if (chrome.runtime.lastError) {
-              console.error(
-                "❌ 메시지 처리 중 오류 발생:",
-                chrome.runtime.lastError
-              );
-            } else {
-              console.log("✅ Focus mode가 성공적으로 변경되었습니다.");
-            }
-          }
-        );
+        updateButton(isEnabled);
+        chrome.runtime.sendMessage({ action: "toggleFocus", state: isEnabled });
       });
     });
   });
 
-  // 버튼 텍스트와 스타일 업데이트
+  addBlockButton.addEventListener("click", function () {
+    const url = blockUrlInput.value.trim();
+    if (!url) return;
+
+    chrome.storage.local.get(["blockedUrls"], function (result) {
+      let blockedUrls = result.blockedUrls || [];
+
+      if (!blockedUrls.includes(url)) {
+        blockedUrls.push(url);
+        chrome.storage.local.set({ blockedUrls }, function () {
+          updateBlockedList(blockedUrls);
+          chrome.runtime.sendMessage({ action: "updateRules", blockedUrls });
+        });
+      }
+    });
+  });
+
   function updateButton(isEnabled) {
     toggleButton.textContent = isEnabled ? "Focus Mode OFF" : "Focus Mode ON";
     toggleButton.style.backgroundColor = isEnabled ? "red" : "green";
+  }
+
+  function updateBlockedList(blockedUrls) {
+    blockedList.innerHTML = "";
+    blockedUrls.forEach((url) => {
+      const li = document.createElement("li");
+      li.textContent = url;
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "삭제";
+      removeBtn.addEventListener("click", function () {
+        blockedUrls = blockedUrls.filter((item) => item !== url);
+        chrome.storage.local.set({ blockedUrls }, function () {
+          updateBlockedList(blockedUrls);
+          chrome.runtime.sendMessage({ action: "updateRules", blockedUrls });
+        });
+      });
+      li.appendChild(removeBtn);
+      blockedList.appendChild(li);
+    });
   }
 });
