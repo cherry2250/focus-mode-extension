@@ -4,32 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Focus Mode</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 10px;
-        width: 250px;
-      }
-      button {
-        margin-top: 5px;
-        padding: 5px 10px;
-        cursor: pointer;
-      }
-      ul {
-        list-style-type: none;
-        padding: 0;
-      }
-      li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="global.css" />
   </head>
   <body>
-    <h2>Focus Mode</h2>
-    <button id="toggleButton">Focus Mode ON</button>
+    <div class="header">
+      <h2>Focus Mode</h2>
+    </div>
+
+    <label for="toggle" class="toggleSwitch">
+      <span id="toggleButton"></span>
+    </label>
+
     <h3>차단할 URL 추가</h3>
     <input type="text" id="urlInput" placeholder="example.com" />
     <button id="addButton">추가</button>

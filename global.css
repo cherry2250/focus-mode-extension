@@ -1,0 +1,58 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 10px;
+  width: 300px;
+}
+
+.toggleSwitch {
+  width: 50px;
+  margin: 15px;
+  height: 25px;
+  display: block;
+  position: relative;
+  border-radius: 30px;
+  background-color: #fff;
+  box-shadow: 0 0 16px 3px rgba(0 0 0 / 15%);
+  cursor: pointer;
+}
+
+#toggleButton {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #f03d3d;
+}
+
+.toggleSwitch.active {
+  background: #f03d3d;
+}
+
+#toggleButton {
+  left: calc(100% - 22px);
+  background: #fff !important;
+}
+
+#toggleButton {
+  transition: all 0.2s ease-in;
+}
+
+button {
+  cursor: pointer;
+}
+h2 {
+  color: red;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
