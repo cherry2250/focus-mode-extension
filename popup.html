@@ -4,22 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Focus Mode</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="global.css" />
   </head>
   <body>
     <div class="header">
-      <h2>Focus Mode</h2>
+      <div>
+        <h2>Focus Mode</h2>
+      </div>
+      <div>
+        <label for="toggle" class="toggleSwitch">
+          <span id="toggleButton"></span>
+        </label>
+      </div>
     </div>
-
-    <label for="toggle" class="toggleSwitch">
-      <span id="toggleButton"></span>
-    </label>
-
-    <h3>차단할 URL 추가</h3>
-    <input type="text" id="urlInput" placeholder="example.com" />
-    <button id="addButton">추가</button>
-    <h3>차단된 URL 목록</h3>
-    <ul id="urlList"></ul>
+    <div class="content">
+      <p>Focus Mode는 집중을 도와주는 도구입니다</p>
+      <p>접속을 차단할 URL을 설정하고 생산성을 높여보세요!</p>
+    </div>
+    <div class="urlInsert">
+      <h3>차단할 URL 추가</h3>
+      <input type="text" id="urlInput" placeholder="example.com" />
+      <button id="addButton">추가</button>
+    </div>
+    <div class="blockList">
+      <h3>차단된 URL 목록</h3>
+      <ul id="urlList"></ul>
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>
